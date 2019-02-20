@@ -85,7 +85,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     cout << "EKF: " << endl;
     ekf_.x_ = VectorXd(4);
     // Eigen doesn't initialize the vectors/matrices.
-    efk.x_ << 1,1,1,1;
+    ekf_.x_ << 1,1,1,1;
 
     previous_timestamp_ = measurement_pack.timestamp_;
 
@@ -127,7 +127,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   previous_timestamp_ = measurement_pack.timestamp_;
 
   // Update the state transition matrix F according to the new elapsed time.
-  kf_.F_ << 1, 0, dt, 0,
+  ekf_.F_ << 1, 0, dt, 0,
             0, 1, 0, dt,
             0, 0, 1, 0,
             0, 0, 0, 1;
@@ -137,8 +137,8 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
   float noise_ay = 9;
 
   // Update the process noise covariance matrix.
-  kf_.Q_ = MatrixXd(4, 4);
-  kf_.Q_ << (pow(dt,4)/4.0)*noise_ax,0,(pow(dt,3)/2.0)*noise_ax,0,
+  ekf_.Q_ = MatrixXd(4, 4);
+  ekf_.Q_ << (pow(dt,4)/4.0)*noise_ax,0,(pow(dt,3)/2.0)*noise_ax,0,
                 0,(pow(dt,4)/4.0)*noise_ay,0,(pow(dt,3)/2.0)*noise_ay,
                 (pow(dt,3)/2.0)*noise_ax,0,pow(dt,2)*noise_ax,0,
                 0,(pow(dt,3)/2.0)*noise_ay,0,pow(dt,2)*noise_ay;
@@ -160,7 +160,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // TODO: Radar updates
     Tools tools;
     Hj_ = tools.CalculateJacobian(ekf_.x_);
-    efk_.H_ = Hj_;
+    ekf_.H_ = Hj_;
     ekf_.R_ = R_radar_;
     ekf_.UpdateEKF(measurement_pack.raw_measurements_);
 

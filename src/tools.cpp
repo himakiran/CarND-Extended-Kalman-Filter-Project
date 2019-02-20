@@ -4,6 +4,8 @@
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
 using std::vector;
+using std::cout;
+using std::endl;
 
 Tools::Tools() {}
 
@@ -27,13 +29,11 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
       return rmse;
   }
 
-   else {
+  else {
   // accumulate squared residuals
-  VectorXd temp(4);
-  temp << 0,0,0,0;
-  double val=0;
+   
   for (int i=0; i < estimations.size(); ++i) {   
-    temp = estimations[i]-ground_truth[i];
+    VectorXd temp = estimations[i]-ground_truth[i];
     temp = temp.array() * temp.array() ;
     rmse += temp;
     }
@@ -42,9 +42,9 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
    	 rmse = rmse/estimations.size();
 	// //   cout << rmse << endl;
 	//  calculate the squared root
-     rmse = rmse.cwiseSqrt();
+     rmse = rmse.array().sqrt();
 	// return the result
-  return rmse;
+  	return rmse;
    }
 
 }
@@ -56,10 +56,10 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    */
 	MatrixXd Hj(3,4);
   // recover state parameters
-  float px = x_state(0);
-  float py = x_state(1);
-  float vx = x_state(2);
-  float vy = x_state(3);
+  double px = x_state(0);
+  double py = x_state(1);
+  double vx = x_state(2);
+  double vy = x_state(3);
 
   // TODO: YOUR CODE HERE 
 
@@ -67,7 +67,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   
   // compute the Jacobian matrix
 
-  float r1c1,r1c2,r2c1,r2c2,r3c1,r3c2,r3c3,r3c4;
+  double r1c1,r1c2,r2c1,r2c2,r3c1,r3c2,r3c3,r3c4;
   Hj << 0,0,0,0,
         0,0,0,0,
         0,0,0,0;
