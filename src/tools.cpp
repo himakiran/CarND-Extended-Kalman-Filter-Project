@@ -68,9 +68,6 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   // compute the Jacobian matrix
 
   double r1c1,r1c2,r2c1,r2c2,r3c1,r3c2,r3c3,r3c4;
-  Hj << 0,0,0,0,
-        0,0,0,0,
-        0,0,0,0;
   try
   {
     if ((px - py) < 0.0001 ) {
@@ -97,5 +94,6 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   }
   
 
+  
   return Hj;
 }
