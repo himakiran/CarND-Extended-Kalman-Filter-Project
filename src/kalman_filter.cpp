@@ -55,10 +55,10 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   /**
    * TODO: update the state by using Extended Kalman Filter equations
    */
-  MatrixXd Hj = CalculateJacobian(x_);
+   
 
   float ro     = sqrt(x_[0]*x_[0] + x_[1]*x_[1]);
-  // atan2 gives angle between -pi and pi ..so no need to normalize
+  // atan2 gives angle between -pi and pi 
   float phi    = atan2(x_[1], x_[0]);
   float rodot;
   if (fabs(ro) < 0.0001) {
@@ -68,8 +68,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   }
   VectorXd z_pred(3);
   z_pred << ro,phi,rodot;
-
   VectorXd y = z - z_pred;
+  // Normalizing angle to be within -Pi to +Pi 
+  if(y[1] < -M_PI){
+    y[1] = Y[1] + 2 * M_PI;
+  }
+  if(y[1] > M_PI){
+    y[1] = Y[1] - 2 * M_PI;
+  }
   MatrixXd Ht = Hj.transpose();
   MatrixXd S = H_ * P_ * Ht + R_;
   MatrixXd Si = S.inverse();

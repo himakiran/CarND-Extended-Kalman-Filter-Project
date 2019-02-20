@@ -1,7 +1,11 @@
 #ifndef KALMAN_FILTER_H_
 #define KALMAN_FILTER_H_
 
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+
 #include "Eigen/Dense"
+#include <cmath>
 
 class KalmanFilter {
  public:
