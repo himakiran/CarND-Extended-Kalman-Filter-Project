@@ -20,7 +20,7 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   VectorXd rmse(4);
   rmse << 0,0,0,0;
 
-  if((estimations.size()==0) or (ground_truth.size()==0)){
+  if((estimations.size()==0) || (ground_truth.size()==0)){
       cout << "vector size is zero" << endl;
       return rmse;
   }
@@ -56,29 +56,30 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    */
 	MatrixXd Hj(3,4);
   // recover state parameters
-  float px = x_state(0);
-  float py = x_state(1);
-  float vx = x_state(2);
-  float vy = x_state(3);
+  double px = x_state(0);
+  double py = x_state(1);
+  double vx = x_state(2);
+  double vy = x_state(3);
 
   // TODO: YOUR CODE HERE 
 
   // check division by zero
   
   // compute the Jacobian matrix
-
-  
+  double c1 = pow(px,2)+pow(py,2);
+  double c2 = sqrt(c1);
+  double c3 = pow((pow(px,2)+pow(py,2)),3/2);
   try
   {
     if (fabs(px - py) > 0.0001 ) {
-        float r1c1 = px/sqrt(pow(px,2)+pow(py,2));
-        float r1c2 = py/sqrt(pow(px,2)+pow(py,2));
-        float r2c1 = -py/(pow(px,2)+pow(py,2));
-        float r2c2 = px/(pow(px,2)+pow(py,2));
-        float r3c1 = (py*(vx*py-vy*px))/pow((pow(px,2)+pow(py,2)),3/2);
-        float r3c2 = (px*(vy*px-vx*py))/pow((pow(px,2)+pow(py,2)),3/2);
-        float r3c3 = r1c1;
-        float r3c4 = r1c2;
+        double r1c1 = px/c2;
+        double r1c2 = py/c2;
+        double r2c1 = -py/c1;
+        double r2c2 = px/c1;
+        double r3c1 = (py*(vx*py-vy*px))/c3;
+        double r3c2 = (px*(vy*px-vx*py))/c3;
+        double r3c3 = r1c1;
+        double r3c4 = r1c2;
         Hj << r1c1,r1c2,0,0,
               r2c1,r2c2,0,0,
               r3c1,r3c2,r3c3,r3c4;

@@ -1,7 +1,9 @@
 #include "kalman_filter.h"
-
+#include <iostream>
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
+using std::cout;
+using std::endl;
 
 /* 
  * Please note that the Eigen library does not initialize 
@@ -49,26 +51,34 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
    */
    
 
-  float ro     = sqrt(x_[0]*x_[0] + x_[1]*x_[1]);
+  double ro     = sqrt(x_[0]*x_[0] + x_[1]*x_[1]);
   // atan2 gives angle between -pi and pi 
-  float phi    = atan2(x_[1], x_[0]);
-  float rodot;
-  if (fabs(ro) < 0.0001) {
-    rodot = 0;
-  } else {
-    rodot = (x_[0]*x_[2] + x_[1]*x_[3])/ro;
-  }
+  double phi    = atan2(x_[1], x_[0]);
+  double rodot;
+  // checking for zero 
+  if (ro==0) {
+    return;   
+  } 
+  rodot = (x_[0]*x_[2] + x_[1]*x_[3])/ro;
+  
   VectorXd z_pred(3);
   z_pred << ro,phi,rodot;
+  
   VectorXd y = z - z_pred;
+
+  //cout << "phi before normalization " << y[1] << endl;
   // Normalizing angle to be within -Pi to +Pi 
-  if(y[1] < -(M_PI)){
-    y[1] = y[1] + (2 * M_PI);
+  while ( y[1] > M_PI || y[1] < -M_PI ) {
+    if(y[1] < -(M_PI)){
+    y[1] = y[1] + (2*M_PI);
   }
   if(y[1] > M_PI){
-    y[1] = y[1] - (2 * M_PI);
+    y[1] = y[1] - (2*M_PI);
   }
+}
   
+  //cout << "phi after normalization " << y[1] << endl;
+
   UpdateEstimate(y);
 
 }
@@ -83,7 +93,7 @@ void KalmanFilter::UpdateEstimate(const VectorXd &y) {
 
   //new estimate
   x_ = x_ + (K * y);
-  long x_size = x_.size();
+  int x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 
