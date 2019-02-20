@@ -56,10 +56,10 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    */
 	MatrixXd Hj(3,4);
   // recover state parameters
-  double px = x_state(0);
-  double py = x_state(1);
-  double vx = x_state(2);
-  double vy = x_state(3);
+  float px = x_state(0);
+  float py = x_state(1);
+  float vx = x_state(2);
+  float vy = x_state(3);
 
   // TODO: YOUR CODE HERE 
 
@@ -67,23 +67,26 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   
   // compute the Jacobian matrix
 
-  double r1c1,r1c2,r2c1,r2c2,r3c1,r3c2,r3c3,r3c4;
+  
   try
   {
-    if ((px - py) < 0.0001 ) {
-        r1c1 = px/sqrt(pow(px,2)+pow(py,2));
-        r1c2 = py/sqrt(pow(px,2)+pow(py,2));
-        r2c1 = -py/(pow(px,2)+pow(py,2));
-        r2c2 = px/(pow(px,2)+pow(py,2));
-        r3c1 = (py*(vx*py-vy*px))/pow((pow(px,2)+pow(py,2)),3/2);
-        r3c2 = (px*(vy*px-vx*py))/pow((pow(px,2)+pow(py,2)),3/2);
-        r3c3 = r1c1;
-        r3c4 = r1c2;
+    if (fabs(px - py) > 0.0001 ) {
+        float r1c1 = px/sqrt(pow(px,2)+pow(py,2));
+        float r1c2 = py/sqrt(pow(px,2)+pow(py,2));
+        float r2c1 = -py/(pow(px,2)+pow(py,2));
+        float r2c2 = px/(pow(px,2)+pow(py,2));
+        float r3c1 = (py*(vx*py-vy*px))/pow((pow(px,2)+pow(py,2)),3/2);
+        float r3c2 = (px*(vy*px-vx*py))/pow((pow(px,2)+pow(py,2)),3/2);
+        float r3c3 = r1c1;
+        float r3c4 = r1c2;
         Hj << r1c1,r1c2,0,0,
               r2c1,r2c2,0,0,
               r3c1,r3c2,r3c3,r3c4;
         
         } else {
+        	Hj << 0,0,0,0,
+        		  0,0,0,0,
+        		  0,0,0,0;
             throw (px - py);
         }
   }
