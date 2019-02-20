@@ -52,6 +52,11 @@ class KalmanFilter {
    */
   void UpdateEKF(const Eigen::VectorXd &z);
 
+  /**
+  contains code calculations common to Lidar and Radar
+  **/
+  void UpdateEstimate(const Eigen::VectorXd &y);
+
   // state vector
   Eigen::VectorXd x_;
 
@@ -70,5 +75,7 @@ class KalmanFilter {
   // measurement covariance matrix
   Eigen::MatrixXd R_;
 };
+
+
 
 #endif // KALMAN_FILTER_H_
