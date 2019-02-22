@@ -56,8 +56,8 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   double phi    = atan2(x_[1], x_[0]);
   double rodot;
   // checking for zero 
-  if (ro==0) {
-    return;   
+  if (ro< 0.00001) {
+    ro=0.00001;   
   } 
   rodot = (x_[0]*x_[2] + x_[1]*x_[3])/ro;
   
@@ -68,14 +68,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   //cout << "phi before normalization " << y[1] << endl;
   // Normalizing angle to be within -Pi to +Pi 
-  while ( y[1] > M_PI || y[1] < -M_PI ) {
+
     if(y[1] < -(M_PI)){
     y[1] = y[1] + (2*M_PI);
   }
   if(y[1] > M_PI){
     y[1] = y[1] - (2*M_PI);
   }
-}
+
   
   //cout << "phi after normalization " << y[1] << endl;
 
@@ -86,14 +86,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 void KalmanFilter::UpdateEstimate(const VectorXd &y) {
 
   MatrixXd Ht = H_.transpose();
-  MatrixXd S = H_ * P_ * Ht + R_;
-  MatrixXd Si = S.inverse();
   MatrixXd PHt = P_ * Ht;
+  MatrixXd S = (H_ * PHt) + R_;
+  MatrixXd Si = S.inverse();
+  
   MatrixXd K = PHt * Si;
 
   //new estimate
   x_ = x_ + (K * y);
-  int x_size = x_.size();
+  long x_size = x_.size();
   MatrixXd I = MatrixXd::Identity(x_size, x_size);
   P_ = (I - K * H_) * P_;
 

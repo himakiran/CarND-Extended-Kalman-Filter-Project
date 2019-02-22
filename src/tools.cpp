@@ -66,38 +66,18 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   // check division by zero
   
   // compute the Jacobian matrix
-  double c1 = pow(px,2)+pow(py,2);
-  double c2 = sqrt(c1);
-  double c3 = pow((pow(px,2)+pow(py,2)),3/2);
-  try
-  {
-    if (fabs(px - py) > 0.0001 ) {
-        double r1c1 = px/c2;
-        double r1c2 = py/c2;
-        double r2c1 = -py/c1;
-        double r2c2 = px/c1;
-        double r3c1 = (py*(vx*py-vy*px))/c3;
-        double r3c2 = (px*(vy*px-vx*py))/c3;
-        double r3c3 = r1c1;
-        double r3c4 = r1c2;
-        Hj << r1c1,r1c2,0,0,
-              r2c1,r2c2,0,0,
-              r3c1,r3c2,r3c3,r3c4;
-        
-        } else {
-        	Hj << 0,0,0,0,
-        		  0,0,0,0,
-        		  0,0,0,0;
-            throw (px - py);
-        }
-  }
-  catch (int e)
-  {
-    cout << "An exception occurred. Integer division by  " << e << '\n';
+  float c1 = px*px+py*py;
+  float c2 = sqrt(c1);
+  float c3 = (c1*c2);
+  // check division by zero
+  if (fabs(c1) < 0.0001) {
+    cout << "CalculateJacobian () - Error - Division by Zero" << endl;
     return Hj;
   }
-  
+  // compute the Jacobian matrix
+  Hj << (px/c2), (py/c2), 0, 0,
+      -(py/c1), (px/c1), 0, 0,
+      py*(vx*py - vy*px)/c3, px*(px*vy - py*vx)/c3, px/c2, py/c2;
 
-  
   return Hj;
 }

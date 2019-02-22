@@ -87,7 +87,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // Eigen doesn't initialize the vectors/matrices.
     ekf_.x_ << 1,1,1,1;
 
-    previous_timestamp_ = measurement_pack.timestamp_;
+    
 
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
       // TODO: Convert radar from polar to cartesian coordinates 
@@ -97,7 +97,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
       double rodot = measurement_pack.raw_measurements_[2];
 
       // getting the x and y components of the position and velocity : polar to cartesian
-      ekf_.x_ << (ro* cos(phi)),(ro* sin(phi)),(rodot * cos(phi)),(rodot * sin(phi)); 
+      ekf_.x_ << (ro* cos(phi)),(ro* sin(phi)),(rodot* cos(phi)),(rodot* sin(phi)); 
       
 
 
@@ -110,9 +110,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
               0;
 
     }
-
+    
     // done initializing, no need to predict or update
     is_initialized_ = true;
+    previous_timestamp_ = measurement_pack.timestamp_;
     return;
   }
 
@@ -146,10 +147,10 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
 
   // Update the process noise covariance matrix.
   ekf_.Q_ = MatrixXd(4, 4);
-  ekf_.Q_ <<  (dt_4/4)*noise_ax, 0, (dt_3/2)*noise_ax, 0,
-         0, (dt_4/4)*noise_ay, 0, (dt_3/2)*noise_ay,
-         (dt_3/2)*noise_ax, 0, dt_2*noise_ax, 0,
-         0, (dt_3/2)*noise_ay, 0, dt_2*noise_ay;
+  ekf_.Q_ <<  dt_4/4*noise_ax, 0, dt_3/2*noise_ax, 0,
+         0, dt_4/4*noise_ay, 0, dt_3/2*noise_ay,
+         dt_3/2*noise_ax, 0, dt_2*noise_ax, 0,
+         0, dt_3/2*noise_ay, 0, dt_2*noise_ay;
 
   ekf_.Predict();
 
